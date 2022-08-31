@@ -145,7 +145,7 @@ app.all("/auth/login", async (req, res) => {
 		});
 
 	// If allowed, send client to Discord
-	const url = await auth.discord.getAuthURL(req.get("origin"));
+	const url = await auth.discord.getAuthURL(`${req.get("origin")}/auth/callback`);
 
 	res.status(200).json({
 		url: url,
