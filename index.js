@@ -39,6 +39,7 @@ const DOMPurify = require("dompurify")(new JSDOM().window);
 // Middleware
 app.set("view engine", "ejs");
 app.use(express.json());
+app.use(require("cors")());
 app.use(
 	express.static("static", {
 		root: __dirname,
@@ -132,17 +133,19 @@ app.get("/docs/:title", async (req, res) => {
 // Authentication Endpoints
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
-	const allowedOrigins = ["antiraid.xyz"];
+	const allowedOrigins = [
+		"https://antiraid.xyz",
+		"https://beta.antiraid.xyz",
+		"https://dev.antiraid.xyz",
+	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
 		return res.status(403).json({
-			error: `\`${origin}\` is not a allowed origin.`,
+			error: `\`${req.get("origin")}\` is not a allowed origin.`,
 		});
 
 	// If allowed, send client to Discord
-	const url = await auth.discord.getAuthURL(
-		`http://localhost:3000/auth/test`
-	);
+	const url = await auth.discord.getAuthURL(req.get("origin"));
 
 	res.status(200).json({
 		url: url,
@@ -173,6 +176,6 @@ app.all("*", async (req, res) => {
 });
 
 // Start Server
-app.listen(3000, () => {
-	logger.info("Express", "Server started on port 3000");
+app.listen(9527, () => {
+	logger.info("Express", "Server started on port 9527");
 });
