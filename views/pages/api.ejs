@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <%- include("../components/header", {
+        title: "API Endpoints",
+        description: "Our API Endpoints currently made"
+    }); %>
+
+    <div id="about" style="padding-left: 15px;">
+        <h3>AntiRaid API Endpoints</h3>
+        <span>API URL: <b>api.antiraid.xyz</b></span>
+
+        <div style="padding: 5px;"></div>
+
+        <div id="tags">
+              <% apiend.forEach((tag) => { %>
+                <span class="mdl-chip">
+                    <span class="mdl-chip__text"><%= tag.name %></span><br>
+                    <span class="mdl-chip__text" style="color: darkgreen;">&bullet; <%= tag.method %></span>
+                </span>
+            <% }); %>
+        </div>
+    </div>
+
+    <div style="padding: 10px;"><hr /></div>
+
+    <%- include("../components/footer") %>
+</html>
