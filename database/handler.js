@@ -39,7 +39,19 @@ class User {
     static async delete() {}
 }
 
+// Guild class
+class Guild {
+    static async create() {}
+
+    static async edit() {}
+
+    static async get() {}
+
+    static async delete() {}
+}
+
 // Expose functions
 module.exports = {
-    User
+    User,
+    Guild
 };
