@@ -137,6 +137,7 @@ app.all("/auth/login", async (req, res) => {
 		"https://antiraid.xyz",
 		"https://beta.antiraid.xyz",
 		"https://dev.antiraid.xyz",
+		"https://selectdev-anti-raid-website-svelte-vwg7vpxpx5jf6p4x-5173.githubpreview.dev"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
