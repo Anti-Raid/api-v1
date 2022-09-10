@@ -137,7 +137,7 @@ app.all("/auth/login", async (req, res) => {
 		"https://antiraid.xyz",
 		"https://beta.antiraid.xyz",
 		"https://dev.antiraid.xyz",
-		"https://selectdev-anti-raid-website-svelte-vwg7vpxpx5jf6p4x-5173.githubpreview.dev"
+		"https://selectdev-anti-raid-website-svelte-vwg7vpxpx5jf6p4x-5173.githubpreview.dev",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -146,7 +146,9 @@ app.all("/auth/login", async (req, res) => {
 		});
 
 	// If allowed, send client to Discord
-	const url = await auth.discord.getAuthURL(`${req.get("origin")}/auth/callback`);
+	const url = await auth.discord.getAuthURL(
+		`${req.get("origin")}/auth/callback`
+	);
 
 	res.status(200).json({
 		url: url,
@@ -156,13 +158,12 @@ app.all("/auth/login", async (req, res) => {
 
 app.all("/auth/callback", async (req, res) => {
 	const data = await auth.discord.getAccessToken(req.query.code);
-	const user = await auth.discord.getUserInfo(data.access_token);
+	const token = await auth.discord.createUser(data.access_token);
 
 	const extraData = JSON.parse(req.query.state);
 
 	let url = extraData.redirect;
-	url += "?data=" + encodeURIComponent(JSON.stringify(user));
-	url += "&platform=discord";
+	url += "?token=" + encodeURIComponent(token);
 
 	setTimeout(() => {
 		res.redirect(url);

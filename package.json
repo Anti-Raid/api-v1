@@ -24,6 +24,7 @@
 		"jsdom": "^20.0.0",
 		"markdown-parse": "^0.2.1",
 		"marked": "^4.0.18",
+		"mongoose": "^6.6.0",
 		"node-fetch": "^2.6.7"
 	}
 }
