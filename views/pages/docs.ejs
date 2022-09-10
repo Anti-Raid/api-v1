@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <%- include("../components/header", {
+        title: "Documentation",
+        description: "Find out more about how to use the Anti Raid API here!"
+    }); %>
+
+    <div class="mdl-grid">
+        <% docs.forEach((doc) => { %>
+            <div class="mdl-cell mdl-cell--4-col">
+                <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title mdl-card--expand">
+                        <h2 class="mdl-card__title-text"><%= doc.metadata.title %></h2>
+                    </div>
+                    
+                    <div class="mdl-card__supporting-text"><%= doc.metadata.description %></div>
+                
+                    <div style="padding-left: 15px;">
+                        <% doc.metadata.tags.forEach((tag) => { %>
+                            <span class="mdl-chip">
+                                <span class="mdl-chip__text"><%= tag %></span>
+                            </span>
+                        <% }); %>
+                    </div>
+                
+                    <div style="padding: 2px;"></div>
+                
+                    <div class="mdl-card__actions mdl-card--border">
+                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/docs/<%= doc.metadata.title %>">View Documentation Page</a>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <%- include("../components/footer") %>
+</html>

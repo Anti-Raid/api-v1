@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <%- include("../components/header", {
+        title: doc.metadata.title,
+        description: doc.metadata.description
+    }); %>
+
+    <div id="about" style="padding-left: 15px;">
+        <h3><%- doc.metadata.title %></h3>
+        <span><%- doc.metadata.description %></span>
+
+        <div style="padding: 5px;"></div>
+
+        <div id="tags">
+            <% doc.metadata.tags.forEach((tag) => { %>
+                <span class="mdl-chip">
+                    <span class="mdl-chip__text"><%= tag %></span>
+                </span>
+            <% }); %>
+        </div>
+    </div>
+
+    <div style="padding: 10px;"><hr /></div>
+
+    <div id="content" style="padding-left: 15px;">
+        <%- doc.html %>
+    </div>
+
+    <%- include("../components/footer") %>
+</html>
