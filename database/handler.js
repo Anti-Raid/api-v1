@@ -30,13 +30,81 @@ this.mongo = mongoose.connect(process.env.MONGO, options, (err) => {
 
 // User class
 class User {
-    static async create() {}
+    /**
+     * 
+     * @param {String} id - User snowflake
+     * @param {Object} discordUser - User data object (Passed from Discord)
+     * @param {Object} guilds - Guilds that the user is in (Passed from Discord)
+     * @param {Object} notifications - Notifications that the user has
+     * @param {Object} tokens - Authentication tokens that the user has (generated automatically on site login)
+     */
+    static async create(id, discordUser, guilds, notifications, tokens) {
+        const user = schemas.get("users");
 
-    static async edit() {}
+        const data = await new user({
+            id: id,
+            discordUser: discordUser,
+            guilds: guilds,
+            notifications: notifications,
+            tokens: tokens
+        });
 
-    static async get() {}
+        data.save();
 
-    static async delete() {}
+        return data;
+    }
+
+    /**
+     * 
+     * @param {String} id - User snowflake
+     * @param {Object} discordUser - User data object (Passed from Discord)
+     * @param {Object} guilds - Guilds that the user is in (Passed from Discord)
+    */
+    static async edit(id, discordUser, guilds) {
+        const User = schemas.get("users");
+        let data;
+
+        User.updateOne({ id: id }, {
+            discordUser: discordUser,
+            guilds: guilds
+        }, (err, document) => {
+            if (err) {
+                logger.error("MongoDB", err);
+                
+                data = "A error has occured while trying to update this document."
+            }
+            else data = document;
+        });
+
+        return data;
+    }
+
+    /**
+     * 
+     * @param {String} id - User snowflake
+    */
+    static async getWithSnowflake(id) {
+        const user = schemas.get("users");
+
+        const data = await user.findOne({
+            id: id
+        });
+
+        return data;
+    }
+
+    /**
+     * @param {String} id - User snowflake
+     */
+    static async delete(id) {
+        const user = schemas.get("users");
+
+        user.deleteOne({
+            id: id
+        });
+
+        return null;
+    }
 }
 
 // Guild class
