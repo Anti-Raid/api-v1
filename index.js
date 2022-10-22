@@ -79,10 +79,10 @@ for (const file of documentationFiles) {
 }
 
 // API Endpoints
-app.all("/api/:category/:endpoint", async (req, res) => {
+app.all(`/api/:category/:endpoint`, async (req, res) => {
 	const endpoint = `${req.params.category}/${req.params.endpoint}`;
 	const data = apiEndpoints.get(endpoint);
-
+	console.log(apiEndpoints)
 	if (data) {
 		if (data.method != req.method)
 			return res.status(405).json({
@@ -130,6 +130,13 @@ app.get("/docs/:title", async (req, res) => {
 		});
 });
 
+app.get('/api', async (req, res) => {
+	const api_endpoints = fs.readdirSync("./endpoints").filter((file) => file.endsWith(".js"))
+	// console.log(api_endpoints)
+	// const api_url = apiEndpoints.get(api)
+	res.render('pages/api', {apiend: apiEndpoints})
+})
+
 // Authentication Endpoints
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
@@ -137,7 +144,6 @@ app.all("/auth/login", async (req, res) => {
 		"https://antiraid.xyz",
 		"https://beta.antiraid.xyz",
 		"https://dev.antiraid.xyz",
-		"https://selectdev-anti-raid-website-svelte-vwg7vpxpx5jf6p4x-5173.githubpreview.dev"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -170,11 +176,11 @@ app.all("/auth/callback", async (req, res) => {
 });
 
 // Page not Found
-app.all("*", async (req, res) => {
-	res.status(404).json({
-		error: "This endpoint does not exist.",
-	});
-});
+// app.all("*", async (req, res) => {
+// 	res.status(404).json({
+// 		error: "- This endpoint does not exist.",
+// 	});
+// });
 
 // Start Server
 app.listen(9527, () => {
