@@ -15,7 +15,11 @@
               <% apiend.forEach((tag) => { %>
                 <span class="mdl-chip">
                     <span class="mdl-chip__text"><%= tag.name %></span><br>
+                    <% if(tag.method === "GET") { %>
                     <span class="mdl-chip__text" style="color: darkgreen;">&bullet; <%= tag.method %></span>
+                <% } else if(tag.method === "POST") { %>
+                    <span class="mdl-chip__text" style="color: darkorange;">&bullet; <%= tag.method %></span>
+                <% } %>
                 </span>
             <% }); %>
         </div>
