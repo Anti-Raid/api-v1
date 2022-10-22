@@ -142,8 +142,8 @@ app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
 		"https://antiraid.xyz",
-		"https://beta.antiraid.xyz",
-		"https://dev.antiraid.xyz",
+		"https://v6-beta.antiraid.xyz",
+                "https://apply.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -176,11 +176,11 @@ app.all("/auth/callback", async (req, res) => {
 });
 
 // Page not Found
-// app.all("*", async (req, res) => {
-// 	res.status(404).json({
-// 		error: "- This endpoint does not exist.",
-// 	});
-// });
+app.all("*", async (req, res) => {
+       res.status(404).json({
+           error: "This endpoint does not exist.",
+	});
+});
 
 // Start Server
 app.listen(9527, () => {
