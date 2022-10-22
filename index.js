@@ -144,6 +144,7 @@ app.all("/auth/login", async (req, res) => {
 		"https://antiraid.xyz",
 		"https://beta.antiraid.xyz",
 		"https://dev.antiraid.xyz",
+                "https://v6-beta.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
