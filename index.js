@@ -82,11 +82,10 @@ for (const file of documentationFiles) {
 app.all(`/api/:category/:endpoint`, async (req, res) => {
 	const endpoint = `${req.params.category}/${req.params.endpoint}`;
 	const data = apiEndpoints.get(endpoint);
-	console.log(apiEndpoints)
 	if (data) {
 		if (data.method != req.method)
 			return res.status(405).json({
-				error: `Method "${method}" is not allowed for endpoint "${endpoint}"`,
+				error: `Method "${data.method}" is not allowed for endpoint "${endpoint}"`,
 			});
 
 		try {
@@ -99,6 +98,17 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 				DOMPurify,
 				marked
 			);
+			await fetch(
+				`https://discord.com/api/v9/channels/1016837614738870302/messages`, {
+					method: 'post',
+					body: JSON.stringify({content: `${req.method} ${req.originalUrl} ${res.statusCode} - ${res.statusMessage} - ${req.ips} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`}),
+					headers: {
+						'Authorization': `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
+						'Content-Type': 'application/json',
+					}
+				}
+			);
+
 		} catch (error) {
 			res.status(500).json({
 				error: "Internal Server Error",
@@ -142,9 +152,8 @@ app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
 		"https://antiraid.xyz",
-		"https://beta.antiraid.xyz",
-		"https://dev.antiraid.xyz",
-                "https://v6-beta.antiraid.xyz"
+		"https://v6-beta.antiraid.xyz",
+                "https://apply.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -178,11 +187,15 @@ app.all("/auth/callback", async (req, res) => {
 
 // Page not Found
 // app.all("*", async (req, res) => {
-// 	res.status(404).json({
-// 		error: "- This endpoint does not exist.",
+//        res.status(404).json({
+//            error: "This endpoint does not exist.",
 // 	});
 // });
-
+const mongoose = require("mongoose")
+mongoose.connect(`mongodb+srv://viper:viper222@cluster0.prvta.mongodb.net/test`, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
 // Start Server
 app.listen(9527, () => {
 	logger.info("Express", "Server started on port 9527");
