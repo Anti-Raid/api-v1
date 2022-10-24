@@ -153,7 +153,7 @@ app.all("/auth/login", async (req, res) => {
 	const allowedOrigins = [
 		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-                "https://apply.antiraid.xyz"
+    "https://apply.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
