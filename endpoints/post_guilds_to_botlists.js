@@ -1,7 +1,8 @@
 module.exports = {
     name: "guilds/post",
-    method: "POST",
+    method: "GET",
     execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
-       res.send("This endpoint is not yet implemented.");
+       res.status(409)
+        res.send("This endpoint is not yet implemented.");
     }
 }
