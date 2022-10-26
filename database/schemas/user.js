@@ -1,8 +1,17 @@
-const {Schema, model} = require('mongoose');
+const { DataTypes } = require("sequelize");
 
-const userSchema = new Schema({
-	userID: String,
-	bio: String,
-});
+const schema = {
+    userID: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
 
-module.exports = model('User', userSchema);
+    bio: {
+        type: DataTypes.STRING
+    }
+};
+
+module.exports = {
+    name: "user",
+    schema: schema,
+}

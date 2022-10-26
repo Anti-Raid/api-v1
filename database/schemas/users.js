@@ -1,11 +1,29 @@
-const { Schema } = require("mongoose");
+const { DataTypes } = require("sequelize");
 
-const schema = new Schema({
-	id: String,
-	discordUser: Array,
-	guilds: Array,
-	notifications: Array,
-	tokens: Array
-});
+const schema = {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
 
-module.exports = schema;
+    discordUser: {
+        type: DataTypes.JSON
+    },
+
+    guilds: {
+        type: DataTypes.JSON
+    },
+
+    notifications: {
+        type: DataTypes.JSON
+    },
+
+    tokens: {
+        type: DataTypes.JSON
+    }
+};
+
+module.exports = {
+    name: "users",
+    schema: schema,
+}
