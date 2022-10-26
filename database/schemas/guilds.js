@@ -1,8 +1,16 @@
-const { Schema } = require("mongoose");
+const { DataTypes } = require("sequelize");
 
-const schema = new Schema({
-	id: String,
-    infractions: Array
-});
+const schema = {
+    id: {
+        type: DataTypes.STRING,
+    },
 
-module.exports = schema;
+    infractions: {
+        type: DataTypes.JSON
+    }
+};
+
+module.exports = {
+    name: "guilds",
+    schema: schema,
+}
