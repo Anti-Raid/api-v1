@@ -98,17 +98,24 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 				DOMPurify,
 				marked
 			);
+
 			await fetch(
-				`https://discord.com/api/v9/channels/1016837614738870302/messages`, {
-					method: 'post',
-					body: JSON.stringify({content: `${req.method} ${req.originalUrl} ${res.statusCode} - ${res.statusMessage} - ${req.ips} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`}),
+				`https://discord.com/api/v9/channels/1016837614738870302/messages`,
+				{
+					method: "post",
+					body: JSON.stringify({
+						content: `${req.method} ${req.originalUrl} ${
+							res.statusCode
+						} - ${res.statusMessage} - ${
+							req.ips
+						} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`,
+					}),
 					headers: {
-						'Authorization': `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
-						'Content-Type': 'application/json',
-					}
+						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
+						"Content-Type": "application/json",
+					},
 				}
 			);
-
 		} catch (error) {
 			res.status(500).json({
 				error: "Internal Server Error",
@@ -140,21 +147,14 @@ app.get("/docs/:title", async (req, res) => {
 		});
 });
 
-app.get('/api', async (req, res) => {
-	const api_endpoints = fs.readdirSync("./endpoints").filter((file) => file.endsWith(".js"))
-	// console.log(api_endpoints)
-	// const api_url = apiEndpoints.get(api)
-	res.render('pages/api', {apiend: apiEndpoints})
-})
-
 // Authentication Endpoints
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
 		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-        "https://apply.antiraid.xyz",
-        "https://v6-blog.antiraid.xyz"
+		"https://apply.antiraid.xyz",
+		"https://v6-blog.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -188,16 +188,12 @@ app.all("/auth/callback", async (req, res) => {
 });
 
 // Page not Found
-// app.all("*", async (req, res) => {
-//        res.status(404).json({
-//            error: "This endpoint does not exist.",
-// 	});
-// });
-const mongoose = require("mongoose")
-mongoose.connect(`mongodb+srv://viper:viper222@cluster0.prvta.mongodb.net/test`, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
+app.all("*", async (req, res) => {
+	res.status(404).json({
+		error: "This endpoint does not exist.",
+	});
 });
+
 // Start Server
 app.listen(9527, () => {
 	logger.info("Express", "Server started on port 9527");

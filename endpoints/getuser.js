@@ -6,6 +6,6 @@ module.exports = {
 		const id = req.query.id;
 		// have to refactor this so it can run with not just putting id in the code but in the url
 		const user = await database.getUser(id);
-		res.send(user)
+		res.send(user);
 	},
 };
