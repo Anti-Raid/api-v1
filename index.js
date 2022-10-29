@@ -8,7 +8,8 @@ const fetch = require("node-fetch");
 const database = require("./database/handler");
 const auth = require("./auth")(database);
 require("dotenv").config();
-
+const path = require("path");
+const Jimp = require("jimp");
 // Configure marked
 const marked = require("marked");
 
@@ -77,6 +78,23 @@ for (const file of documentationFiles) {
 		}
 	});
 }
+app.get("/cdn/images/:logoname", async (req, res) => {
+	let file = req.params.logoname;
+	let filePath =
+		path.join(__dirname, `public/images/${file}.png`) ||
+		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
+	if (filePath.includes(file))
+		res.send({
+			message:
+				"Whoops, seems like i can't find that image! Please try one of the following images that i can show you by typing it's exact name",
+			parameters: fs
+				.readdirSync("./public/images")
+				.filter((file) => file.endsWith(".png"))
+				.map((x) => x.split(".")[0])
+				.join(" | "),
+		});
+	else res.sendFile(filePath);
+});
 
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
@@ -106,8 +124,8 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 					body: JSON.stringify({
 						content: `${req.method} ${req.originalUrl} ${
 							res.statusCode
-						} - ${res.statusMessage} - ${
-							req.ips
+						} - ${
+							res.statusMessage
 						} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`,
 					}),
 					headers: {
@@ -187,12 +205,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-// Page not Found
-app.all("*", async (req, res) => {
-	res.status(404).json({
-		error: "This endpoint does not exist.",
-	});
-});
+// // Page not Found
+// app.all("*", async (req, res) => {
+// 	res.status(404).json({
+// 		error: "This endpoint does not exist.",
+// 	});
+// });
 
 // Start Server
 app.listen(9527, () => {
