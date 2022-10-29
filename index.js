@@ -7,6 +7,7 @@ const logger = require("./logger");
 const fetch = require("node-fetch");
 const database = require("./database/handler");
 const auth = require("./auth")(database);
+const path = require("path");
 require("dotenv").config();
 
 // Configure marked
@@ -78,6 +79,28 @@ for (const file of documentationFiles) {
 	});
 }
 
+// CDN endpoints
+app.get("/cdn/images/:image", async (req, res) => {
+	let file = req.params.image;
+
+        if (!file || file === "") return res.send({ message: "You did not mention a image name!" });
+
+	let filePath =
+		path.join(__dirname, `public/images/${file}.png`) ||
+		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
+	if (filePath.includes(file))
+		return res.send({
+			message:
+				"Whoops, seems like i can't find that image! Please try one of the following images that i can show you by typing it's exact name",
+			parameters: fs
+				.readdirSync("./public/images")
+				.filter((file) => file.endsWith(".png"))
+				.map((x) => x.split(".")[0])
+				.join(" | "),
+		});
+	else return res.sendFile(filePath);
+});
+
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
 	const endpoint = `${req.params.category}/${req.params.endpoint}`;
@@ -98,17 +121,24 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 				DOMPurify,
 				marked
 			);
+
 			await fetch(
-				`https://discord.com/api/v9/channels/1016837614738870302/messages`, {
-					method: 'post',
-					body: JSON.stringify({content: `${req.method} ${req.originalUrl} ${res.statusCode} - ${res.statusMessage} - ${req.ips} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`}),
+				`https://discord.com/api/v9/channels/1016837614738870302/messages`,
+				{
+					method: "post",
+					body: JSON.stringify({
+						content: `${req.method} ${req.originalUrl} ${
+							res.statusCode
+						} - ${
+							res.statusMessage
+						} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`,
+					}),
 					headers: {
-						'Authorization': `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
-						'Content-Type': 'application/json',
-					}
+						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
+						"Content-Type": "application/json",
+					},
 				}
 			);
-
 		} catch (error) {
 			res.status(500).json({
 				error: "Internal Server Error",
@@ -140,20 +170,14 @@ app.get("/docs/:title", async (req, res) => {
 		});
 });
 
-app.get('/api', async (req, res) => {
-	const api_endpoints = fs.readdirSync("./endpoints").filter((file) => file.endsWith(".js"))
-	// console.log(api_endpoints)
-	// const api_url = apiEndpoints.get(api)
-	res.render('pages/api', {apiend: apiEndpoints})
-})
-
 // Authentication Endpoints
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
 		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-                "https://apply.antiraid.xyz"
+		"https://apply.antiraid.xyz",
+		"https://v6-blog.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -162,7 +186,9 @@ app.all("/auth/login", async (req, res) => {
 		});
 
 	// If allowed, send client to Discord
-	const url = await auth.discord.getAuthURL(`${req.get("origin")}/auth/callback`);
+	const url = await auth.discord.getAuthURL(
+		`${req.get("origin")}/auth/callback`
+	);
 
 	res.status(200).json({
 		url: url,
@@ -172,30 +198,25 @@ app.all("/auth/login", async (req, res) => {
 
 app.all("/auth/callback", async (req, res) => {
 	const data = await auth.discord.getAccessToken(req.query.code);
-	const user = await auth.discord.getUserInfo(data.access_token);
+	const token = await auth.discord.createUser(data.access_token);
 
 	const extraData = JSON.parse(req.query.state);
 
 	let url = extraData.redirect;
-	url += "?data=" + encodeURIComponent(JSON.stringify(user));
-	url += "&platform=discord";
+	url += "?token=" + encodeURIComponent(token);
 
 	setTimeout(() => {
 		res.redirect(url);
 	}, 1000);
 });
 
-// Page not Found
+// // Page not Found
 // app.all("*", async (req, res) => {
-//        res.status(404).json({
-//            error: "This endpoint does not exist.",
+// 	res.status(404).json({
+// 		error: "This endpoint does not exist.",
 // 	});
 // });
-const mongoose = require("mongoose")
-mongoose.connect(`mongodb+srv://viper:viper222@cluster0.prvta.mongodb.net/test`, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
+
 // Start Server
 app.listen(9527, () => {
 	logger.info("Express", "Server started on port 9527");

@@ -1,11 +1,28 @@
+const database = require("../database/handler");
 module.exports = {
 	name: "users/get",
 	method: "GET",
+	/**
+	 *
+	 * @param {*} req
+	 * @param {*} res
+	 * @param {*} fetch
+	 * @param {database} database
+	 * @param {*} auth
+	 * @param {*} DOMpurify
+	 * @param {*} marked
+	 */
 	execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
-		// res.sendStatus(403)
 		const id = req.query.id;
-		// have to refactor this so it can run with not just putting id in the code but in the url
-		const user = await database.getUser(id);
-		res.send(user)
+		const user = await database.User.getUser(id);
+		if (user) res.send(user);
+		else
+			res.status(404).send({
+				message:
+					"We couldn't fetch any information about this user in our database",
+				userID: id,
+				error: true,
+				fatal: false,
+			});
 	},
 };
