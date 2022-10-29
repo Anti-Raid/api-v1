@@ -9,7 +9,6 @@ const database = require("./database/handler");
 const auth = require("./auth")(database);
 require("dotenv").config();
 const path = require("path");
-const Jimp = require("jimp");
 // Configure marked
 const marked = require("marked");
 
