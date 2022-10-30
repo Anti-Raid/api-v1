@@ -123,24 +123,6 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 				DOMPurify,
 				marked
 			);
-
-			await fetch(
-				`https://discord.com/api/v9/channels/1016837614738870302/messages`,
-				{
-					method: "post",
-					body: JSON.stringify({
-						content: `${req.method} ${req.originalUrl} ${
-							res.statusCode
-						} - ${
-							res.statusMessage
-						} - Sent from **API**\n> Timestamp: ${new Date().toLocaleString()}`,
-					}),
-					headers: {
-						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
 		} catch (error) {
 			res.status(500).json({
 				error: "Internal Server Error",
