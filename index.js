@@ -83,11 +83,13 @@ for (const file of documentationFiles) {
 app.get("/cdn/images/:image", async (req, res) => {
 	let file = req.params.image;
 
-        if (!file || file === "") return res.send({ message: "You did not mention a image name!" });
+	if (!file || file === "")
+		return res.send({ message: "You did not mention a image name!" });
 
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
+
 	if (filePath.includes(file))
 		return res.send({
 			message:
@@ -210,12 +212,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-// // Page not Found
-// app.all("*", async (req, res) => {
-// 	res.status(404).json({
-// 		error: "This endpoint does not exist.",
-// 	});
-// });
+// Page not Found
+app.all("*", async (req, res) => {
+	res.status(404).json({
+		error: "This endpoint does not exist.",
+	});
+});
 
 // Start Server
 app.listen(9527, () => {
