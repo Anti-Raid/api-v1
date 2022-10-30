@@ -7,8 +7,9 @@ const logger = require("./logger");
 const fetch = require("node-fetch");
 const database = require("./database/handler");
 const auth = require("./auth")(database);
-require("dotenv").config();
 const path = require("path");
+require("dotenv").config();
+
 // Configure marked
 const marked = require("marked");
 
@@ -77,13 +78,20 @@ for (const file of documentationFiles) {
 		}
 	});
 }
-app.get("/cdn/images/:logoname", async (req, res) => {
-	let file = req.params.logoname;
+
+// CDN endpoints
+app.get("/cdn/images/:image", async (req, res) => {
+	let file = req.params.image;
+
+	if (!file || file === "")
+		return res.send({ message: "You did not mention a image name!" });
+
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
+
 	if (filePath.includes(file))
-		res.send({
+		return res.send({
 			message:
 				"Whoops, seems like i can't find that image! Please try one of the following images that i can show you by typing it's exact name",
 			parameters: fs
@@ -92,7 +100,7 @@ app.get("/cdn/images/:logoname", async (req, res) => {
 				.map((x) => x.split(".")[0])
 				.join(" | "),
 		});
-	else res.sendFile(filePath);
+	else return res.sendFile(filePath);
 });
 
 // API Endpoints
@@ -186,12 +194,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-// // Page not Found
-// app.all("*", async (req, res) => {
-// 	res.status(404).json({
-// 		error: "This endpoint does not exist.",
-// 	});
-// });
+// Page not Found
+app.all("*", async (req, res) => {
+	res.status(404).json({
+		error: "This endpoint does not exist.",
+	});
+});
 
 // Start Server
 app.listen(9527, () => {
