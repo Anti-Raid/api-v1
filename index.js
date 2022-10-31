@@ -184,12 +184,12 @@ app.all("/auth/login", async (req, res) => {
 
 app.all("/auth/callback", async (req, res) => {
 	const data = await auth.discord.getAccessToken(req.query.code);
-	const token = await auth.discord.getUserInfo(data.access_token);
+	const user = await auth.discord.getUserInfo(data.access_token);
 
 	const extraData = JSON.parse(req.query.state);
 
 	let url = extraData.redirect;
-	url += "?token=" + encodeURIComponent(token);
+	url += "?data=" + encodeURIComponent(user);
 
 	setTimeout(() => {
 		res.redirect(url);
