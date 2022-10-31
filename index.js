@@ -107,6 +107,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 app.all(`/api/:category/:endpoint`, async (req, res) => {
 	const endpoint = `${req.params.category}/${req.params.endpoint}`;
 	const data = apiEndpoints.get(endpoint);
+
 	if (data) {
 		if (data.method != req.method)
 			return res.status(405).json({
@@ -160,6 +161,7 @@ app.all("/auth/login", async (req, res) => {
 	const allowedOrigins = [
 		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
+
 		"https://apply.antiraid.xyz",
 		"https://v6-blog.antiraid.xyz",
 	];
