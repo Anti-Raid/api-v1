@@ -189,7 +189,7 @@ app.all("/auth/callback", async (req, res) => {
 	const extraData = JSON.parse(req.query.state);
 
 	let url = extraData.redirect;
-	url += "?data=" + encodeURIComponent(user);
+	url += "?data=" + encodeURIComponent(JSON.stringify(user));
 
 	setTimeout(() => {
 		res.redirect(url);
