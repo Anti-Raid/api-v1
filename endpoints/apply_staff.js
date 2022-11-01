@@ -25,7 +25,7 @@ module.exports = {
 				status: 400,
 			});
 
-		const user = await database.Users.getUser(null, token);
+		const user = await database.Users.getUserWithToken(token);
 
 		const staff_app = {
 			position: position,
@@ -47,11 +47,12 @@ module.exports = {
 				user.tokens,
 				apps
 			);
-		} else res.status(400).json({
-            message: "Unable to fetch user.",
-            error: true,
-            status: 400,
-        })
+		} else
+			res.status(400).json({
+				message: "Unable to fetch user.",
+				error: true,
+				status: 400,
+			});
 
 		return res.status(200).json({
 			message: "Success!",
