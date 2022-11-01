@@ -8,6 +8,7 @@ const fetch = require("node-fetch");
 const database = require("./database/handler");
 const auth = require("./auth")(database);
 const path = require("path");
+const crypto = require("node:crypto");
 require("dotenv").config();
 
 // Configure marked
