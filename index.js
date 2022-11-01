@@ -183,6 +183,22 @@ app.all("/auth/login", async (req, res) => {
 });
 
 app.all("/auth/callback", async (req, res) => {
+	if (!req.query.code || req.query.code === "") {
+		if (!req.query.state || req.query.state === "")
+			return res.status(400).json({
+				message:
+					"There was no code, and state provided with this request.",
+				error: true,
+				status: 400,
+			});
+		else {
+			const data = JSON.parse(req.query.state);
+			const domain = new URL(data.redirect);
+
+			return res.redirect(`https://${domain.hostname}/`);
+		}
+	}
+
 	const data = await auth.discord.getAccessToken(req.query.code);
 	const user = await auth.discord.getUserInfo(data.access_token);
 

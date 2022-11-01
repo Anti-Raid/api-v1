@@ -21,7 +21,7 @@ module.exports = {
 		if (!discord || !position || !answers)
 			return res.status(400).json({
 				message: "Missing some headers",
-                error: true,
+				error: true,
 				status: 400,
 			});
 
@@ -56,11 +56,11 @@ module.exports = {
 				[],
 				staff_app
 			);
-        
-        return res.status(200).json({
-            message: "Success!",
-            error: false,
-            status: 200
-        });
+
+		return res.status(200).json({
+			message: "Success!",
+			error: false,
+			status: 200,
+		});
 	},
 };
