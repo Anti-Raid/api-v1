@@ -1,6 +1,6 @@
 const database = require("../database/handler");
 module.exports = {
-	name: "users/get",
+	name: "users/getwithtoken",
 	method: "GET",
 	/**
 	 *
@@ -13,15 +13,15 @@ module.exports = {
 	 * @param {*} marked
 	 */
 	execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
-		const id = req.query.id;
-		const user = await database.Users.getUser(id, null);
+		const token = req.query.token;
+		const user = await database.Users.getUser(null, token);
 
 		if (user) res.send(user);
 		else
 			res.status(404).send({
 				message:
 					"We couldn't fetch any information about this user in our database",
-				userID: id,
+				token: token,
 				error: true,
 				fatal: false,
 			});

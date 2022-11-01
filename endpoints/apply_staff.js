@@ -14,18 +14,18 @@ module.exports = {
 	 * @param {*} marked
 	 */
 	execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
-		const discord = req.header("discordUser");
+		const token = req.header("token");
 		const position = req.header("position");
 		const answers = req.header("answers");
 
-		if (!discord || !position || !answers)
+		if (!token || !position || !answers)
 			return res.status(400).json({
 				message: "Missing some headers",
 				error: true,
 				status: 400,
 			});
 
-		const user = database.Users.getUser(discord.id);
+		const user = await database.Users.getUser(null, token);
 
 		const staff_app = {
 			position: position,
@@ -47,15 +47,11 @@ module.exports = {
 				user.tokens,
 				apps
 			);
-		} else
-			await database.Users.createUser(
-				discord.id,
-				discord,
-				discord.guilds || [],
-				[],
-				[],
-				staff_app
-			);
+		} else res.status(400).json({
+            message: "Unable to fetch user.",
+            error: true,
+            status: 400,
+        })
 
 		return res.status(200).json({
 			message: "Success!",

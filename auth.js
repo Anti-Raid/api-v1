@@ -27,12 +27,12 @@ module.exports = (database) => {
 	};
 
 	// Get the Access Token
-	const getAccessToken = async (code) => {
+	const getAccessToken = async (code, access) => {
 		const token = await auth
 			.tokenRequest({
 				code: code,
 				scope: ["identify", "guilds"],
-				grantType: "authorization_code",
+				grantType: access ? "authorization_code" : "refresh_token",
 			})
 			.catch((err) => {
 				return {
