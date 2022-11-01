@@ -183,6 +183,8 @@ app.all("/auth/login", async (req, res) => {
 });
 
 app.all("/auth/callback", async (req, res) => {
+	let response = null;
+
 	if (!req.query.code || req.query.code === "") {
 		if (!req.query.state || req.query.state === "")
 			return res.status(400).json({
@@ -199,13 +201,63 @@ app.all("/auth/callback", async (req, res) => {
 		}
 	}
 
-	const data = await auth.discord.getAccessToken(req.query.code);
-	const user = await auth.discord.getUserInfo(data.access_token);
+	const discord = await auth.discord.getAccessToken(req.query.code, true);
+	const userInfo = await auth.discord.getUserInfo(discord.access_token);
+
+	const discordRefresh = await auth.discord.getAccessToken(
+		discord.refresh_token,
+		false
+	);
+	const guilds = await auth.discord.getGuilds(discordRefresh.access_token);
+
+	const dbUser = await database.Users.getUser(userInfo.id);
+
+	if (dbUser) {
+		const tokens = dbUser.tokens;
+		const token = {
+			token: crypto.randomUUID(),
+			date: new Date(),
+			verified: true,
+		};
+
+		tokens.push(token);
+
+		await database.Users.updateUser(
+			dbUser.id,
+			userInfo,
+			guilds,
+			dbUser.notifications,
+			tokens,
+			dbUser.staff_applications
+		);
+
+		response = token;
+	} else {
+		const tokens = [];
+		const token = {
+			token: crypto.randomUUID(),
+			date: new Date(),
+			verified: true,
+		};
+
+		tokens.push(token);
+
+		await database.Users.createUser(
+			userInfo.id,
+			userInfo,
+			guilds,
+			[],
+			tokens,
+			[]
+		);
+
+		response = token;
+	}
 
 	const extraData = JSON.parse(req.query.state);
 
 	let url = extraData.redirect;
-	url += "?data=" + encodeURIComponent(JSON.stringify(user));
+	url += "?token=" + encodeURIComponent(response);
 
 	setTimeout(() => {
 		res.redirect(url);
