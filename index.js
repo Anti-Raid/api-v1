@@ -232,7 +232,7 @@ app.all("/auth/callback", async (req, res) => {
 			dbUser.staff_applications
 		);
 
-		response = token;
+		response = token.token;
 	} else {
 		const tokens = [];
 		const token = {
@@ -252,7 +252,7 @@ app.all("/auth/callback", async (req, res) => {
 			[]
 		);
 
-		response = token;
+		response = token.token;
 	}
 
 	const extraData = JSON.parse(req.query.state);
