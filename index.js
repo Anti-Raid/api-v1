@@ -265,12 +265,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-// Page not Found
+/* Page not Found
 app.all("*", async (req, res) => {
 	res.status(404).json({
 		error: "This endpoint does not exist.",
 	});
-});
+});*/
 
 // Start Server
 app.listen(9527, () => {
