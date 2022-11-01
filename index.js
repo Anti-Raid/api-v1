@@ -210,7 +210,7 @@ app.all("/auth/callback", async (req, res) => {
 	);
 	const guilds = await auth.discord.getGuilds(discordRefresh.access_token);
 
-	const dbUser = await database.Users.getUser(userInfo.id);
+	const dbUser = await database.Users.getUser(userInfo.id, null);
 
 	if (dbUser) {
 		const tokens = dbUser.tokens;

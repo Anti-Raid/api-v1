@@ -14,8 +14,8 @@ module.exports = {
 	 */
 	execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
 		const id = req.query.id;
-		const user = await database.Users.getUser(id);
-        
+		const user = await database.Users.getUser(id, null);
+
 		if (user) res.send(user);
 		else
 			res.status(404).send({
