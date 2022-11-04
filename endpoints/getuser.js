@@ -16,6 +16,7 @@ module.exports = {
 		const id = req.query.id;
 		const user = await database.Users.getUser(id);
 
+		user["tokens"] = [];
 		if (user) res.send(user);
 		else
 			res.status(404).send({
