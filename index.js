@@ -84,14 +84,11 @@ for (const file of documentationFiles) {
 app.get("/cdn/images/:image", async (req, res) => {
 	let file = req.params.image;
 
-	if (!file || file === "")
-		return res.send({ message: "You did not mention a image name!" });
-
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-
-	if (filePath.includes(file))
+		
+	if (!filePath.includes(file))
 		return res.send({
 			message:
 				"Whoops, seems like i can't find that image! Please try one of the following images that i can show you by typing it's exact name",
