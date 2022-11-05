@@ -17,7 +17,9 @@ module.exports = {
 		const user = await database.Users.getUser(id);
 
 		user["tokens"] = [];
-		if (user) res.send(user);
+		user["staff_applications"] = [];
+		
+                if (user) res.send(user);
 		else
 			res.status(404).send({
 				message:
