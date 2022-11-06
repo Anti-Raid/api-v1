@@ -162,6 +162,7 @@ app.all("/auth/login", async (req, res) => {
 
 		"https://apply.antiraid.xyz",
 		"https://v6-blog.antiraid.xyz",
+                "https://marketplace.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
