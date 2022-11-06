@@ -87,7 +87,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-		
+
 	if (!filePath.includes(file))
 		return res.send({
 			message:
@@ -162,7 +162,7 @@ app.all("/auth/login", async (req, res) => {
 
 		"https://apply.antiraid.xyz",
 		"https://v6-blog.antiraid.xyz",
-                "https://marketplace.antiraid.xyz"
+		"https://marketplace.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -212,43 +212,21 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-		const tokens = dbUser.tokens;
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
-
-		tokens.push(token);
+		await database.Tokens.add(crypto.randomUUID(), dbUser.id, new Date());
 
 		await database.Users.updateUser(
 			dbUser.id,
 			userInfo,
 			guilds,
 			dbUser.notifications,
-			tokens,
 			dbUser.staff_applications
 		);
 
 		response = token.token;
 	} else {
-		const tokens = [];
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
+		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
 
-		tokens.push(token);
-
-		await database.Users.createUser(
-			userInfo.id,
-			userInfo,
-			guilds,
-			[],
-			tokens,
-			[]
-		);
+		await database.Tokens.add(crypto.randomUUID(), userInfo.id, new Date());
 
 		response = token.token;
 	}
