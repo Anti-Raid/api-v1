@@ -209,7 +209,9 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-		await database.Tokens.add(crypto.randomUUID(), dbUser.id, new Date());
+        const token = crypto.randomUUID();
+
+		await database.Tokens.add(token, dbUser.id, new Date());
 
 		await database.Users.updateUser(
 			dbUser.id,
@@ -219,13 +221,15 @@ app.all("/auth/callback", async (req, res) => {
 			dbUser.staff_applications
 		);
 
-		response = token.token;
+		response = token;
 	} else {
+        const token = crypto.randomUUID();
+
 		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
 
-		await database.Tokens.add(crypto.randomUUID(), userInfo.id, new Date());
+		await database.Tokens.add(token, userInfo.id, new Date());
 
-		response = token.token;
+		response = token;
 	}
 
 	const extraData = JSON.parse(req.query.state);
