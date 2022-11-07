@@ -87,7 +87,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-		
+
 	if (!filePath.includes(file))
 		return res.send({
 			message:
