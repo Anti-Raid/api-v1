@@ -87,7 +87,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-
+		
 	if (!filePath.includes(file))
 		return res.send({
 			message:
@@ -157,11 +157,8 @@ app.get("/docs/:title", async (req, res) => {
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
-		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-
 		"https://apply.antiraid.xyz",
-		"https://v6-blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
 	];
 
@@ -241,12 +238,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-// Page not Found
+/* Page not Found
 app.all("*", async (req, res) => {
 	res.status(404).json({
 		error: "This endpoint does not exist.",
 	});
-});
+});*/
 
 // Start Server
 app.listen(9527, () => {
