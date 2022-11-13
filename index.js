@@ -9,6 +9,7 @@ const database = require("./database/handler");
 const auth = require("./auth")(database);
 const path = require("path");
 const crypto = require("node:crypto");
+const ratelimits = require("express-rate-limit")
 require("dotenv").config();
 
 // Configure marked
@@ -37,6 +38,13 @@ marked.setOptions({
 // DOMPurify
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
+const limiter = ratelimits({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+	message: 'You have exceeded our Rate Limit of 30 requests per 15 minutes!',
+})
 
 // Middleware
 app.set("view engine", "ejs");
@@ -47,6 +55,7 @@ app.use(
 		root: __dirname,
 	})
 );
+app.use(limiter);
 
 // API Endpoints Map
 const apiEndpoints = new Map();
@@ -87,7 +96,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 	let filePath =
 		path.join(__dirname, `public/images/${file}.png`) ||
 		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-
+		
 	if (!filePath.includes(file))
 		return res.send({
 			message:
@@ -98,7 +107,8 @@ app.get("/cdn/images/:image", async (req, res) => {
 				.map((x) => x.split(".")[0])
 				.join(" | "),
 		});
-	else return res.sendFile(filePath);
+	else
+		res.sendFile(filePath)
 });
 
 // API Endpoints
@@ -157,9 +167,11 @@ app.get("/docs/:title", async (req, res) => {
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
+		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
+
 		"https://apply.antiraid.xyz",
-		"https://marketplace.antiraid.xyz",
+		"https://v6-blog.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -209,27 +221,45 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-        const token = crypto.randomUUID();
+		const tokens = dbUser.tokens;
+		const token = {
+			token: crypto.randomUUID(),
+			date: new Date(),
+			verified: true,
+		};
 
-		await database.Tokens.add(token, dbUser.id, new Date());
+		tokens.push(token);
 
 		await database.Users.updateUser(
 			dbUser.id,
 			userInfo,
 			guilds,
 			dbUser.notifications,
+			tokens,
 			dbUser.staff_applications
 		);
 
-		response = token;
+		response = token.token;
 	} else {
-        const token = crypto.randomUUID();
+		const tokens = [];
+		const token = {
+			token: crypto.randomUUID(),
+			date: new Date(),
+			verified: true,
+		};
 
-		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
+		tokens.push(token);
 
-		await database.Tokens.add(token, userInfo.id, new Date());
+		await database.Users.createUser(
+			userInfo.id,
+			userInfo,
+			guilds,
+			[],
+			tokens,
+			[]
+		);
 
-		response = token;
+		response = token.token;
 	}
 
 	const extraData = JSON.parse(req.query.state);
@@ -242,12 +272,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
-/* Page not Found
-app.all("*", async (req, res) => {
-	res.status(404).json({
-		error: "This endpoint does not exist.",
-	});
-});*/
+// Page not Found
+// app.all("*", async (req, res) => {
+// 	res.status(404).json({
+// 		error: "This endpoint does not exist.",
+// 	});
+// });
 
 // Start Server
 app.listen(9527, () => {
