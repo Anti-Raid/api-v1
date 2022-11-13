@@ -258,7 +258,6 @@ app.all("/auth/callback", async (req, res) => {
 			tokens,
 			[]
 		);
-
 		response = token.token;
 	}
 
