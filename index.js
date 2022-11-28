@@ -9,7 +9,7 @@ const database = require("./database/handler");
 const auth = require("./auth")(database);
 const path = require("path");
 const crypto = require("node:crypto");
-const ratelimits = require("express-rate-limit")
+const ratelimits = require("express-rate-limit");
 require("dotenv").config();
 
 // Configure marked
@@ -39,12 +39,15 @@ marked.setOptions({
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
 const limiter = ratelimits({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-	message: 'You have exceeded our Rate Limit of 30 requests per 15 minutes!',
-})
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+	message: {
+		alert: "You have exceeded our Rate Limit of 30 requests per 15 minutes!",
+		error: true,
+	},
+});
 
 // Middleware
 app.set("view engine", "ejs");
@@ -93,10 +96,8 @@ for (const file of documentationFiles) {
 app.get("/cdn/images/:image", async (req, res) => {
 	let file = req.params.image;
 
-	let filePath =
-		path.join(__dirname, `public/images/${file}.png`) ||
-		fs.readdirSync("./public/images").map((x) => x.split(".")[0]);
-		
+	let filePath = path.join(__dirname, `public/images/${file}.png`);
+
 	if (!filePath.includes(file))
 		return res.send({
 			message:
@@ -107,8 +108,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 				.map((x) => x.split(".")[0])
 				.join(" | "),
 		});
-	else
-		res.sendFile(filePath)
+	else res.sendFile(filePath);
 });
 
 // API Endpoints
