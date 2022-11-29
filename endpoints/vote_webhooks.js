@@ -20,7 +20,7 @@ module.exports = {
             {
                 method: "post",
                 body: JSON.stringify({
-                    content: `Nice we got a vote! ${vote.votes}`,
+                content: `Nice we got a vote! ${vote.votes}`,
                 }),
                 headers: {
                     Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
