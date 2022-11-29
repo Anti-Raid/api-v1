@@ -167,11 +167,9 @@ app.get("/docs/:title", async (req, res) => {
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
-		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-
 		"https://apply.antiraid.xyz",
-		"https://v6-blog.antiraid.xyz",
+		"https://marketplace.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -221,44 +219,27 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-		const tokens = dbUser.tokens;
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
+        const token = crypto.randomUUID();
 
-		tokens.push(token);
+		await database.Tokens.add(token, dbUser.id, new Date());
 
 		await database.Users.updateUser(
 			dbUser.id,
 			userInfo,
 			guilds,
 			dbUser.notifications,
-			tokens,
 			dbUser.staff_applications
 		);
 
 		response = token;
 	} else {
-		const tokens = [];
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
+        const token = crypto.randomUUID();
 
-		tokens.push(token);
+		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
 
-		await database.Users.createUser(
-			userInfo.id,
-			userInfo,
-			guilds,
-			[],
-			tokens,
-			[]
-		);
-		response = token.token;
+		await database.Tokens.add(token, userInfo.id, new Date());
+
+		response = token;
 	}
 
 	const extraData = JSON.parse(req.query.state);
