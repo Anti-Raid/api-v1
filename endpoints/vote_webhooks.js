@@ -1,5 +1,4 @@
 const db = require("../database/handler");
-const {EmbedBuilder}=require("discord.js")
 const Infinity = require('infinity-bots');
 const webhook = new Infinity.Webhook('AntiRaidIsTheBest499')
 module.exports = {
@@ -21,13 +20,7 @@ module.exports = {
             {
                 method: "post",
                 body: JSON.stringify({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setColor("Green")
-                            .setThumbnail('https://api.antiraid.xyz/cdn/images/logo_main')
-                            .setAuthor({name: "Infinity Bot List", url: votes.userObj.avatar})
-                            .setDescription(`A vote has been received!\n>>> User ID: ${vote.user}\nVotes: ${vote.votes}\nType: ${vote.type}`)
-                    ],
+                content: `Nice we got a vote! ${vote.votes}`,
                 }),
                 headers: {
                     Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
