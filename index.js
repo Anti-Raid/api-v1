@@ -39,7 +39,6 @@ marked.setOptions({
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
 const limiter = ratelimits({
-
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -107,7 +106,6 @@ app.get("/cdn/images/:image", async (req, res) => {
 				.map((x) => x.split(".")[0])
 				.join(" | "),
 		});
-
 	else res.sendFile(filePath);
 });
 
@@ -219,7 +217,7 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-        const token = crypto.randomUUID();
+		const token = crypto.randomUUID();
 
 		await database.Tokens.add(token, dbUser.id, new Date());
 
@@ -233,7 +231,7 @@ app.all("/auth/callback", async (req, res) => {
 
 		response = token;
 	} else {
-        const token = crypto.randomUUID();
+		const token = crypto.randomUUID();
 
 		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
 
