@@ -1,6 +1,7 @@
 const db = require("../database/handler");
 const Infinity = require("infinity-bots");
 const webhook = new Infinity.Webhook("AntiRaidIsTheBest499");
+
 module.exports = {
 	name: "webhooks/vote",
 	method: "POST",
@@ -16,12 +17,22 @@ module.exports = {
 	 */
 	execute: webhook.hookListener(
 		async (vote, req, res, fetch, database, auth, DOMpurify, marked) => {
-			await fetch(
+			/*const embed = {
+                title: "New Vote!",
+                author: {
+                    name: "",
+                    icon_url: "",
+                    url: ""
+                }
+            };*/
+
+            await fetch(
 				`https://discord.com/api/v9/channels/1045460117287616552/messages`,
 				{
 					method: "post",
 					body: JSON.stringify({
-						content: `Nice we got a vote! ${vote.votes}`,
+						/*embeds: [embed]*/
+                        content: "test"
 					}),
 					headers: {
 						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
