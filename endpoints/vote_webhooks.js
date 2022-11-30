@@ -26,6 +26,8 @@ module.exports = {
                 }
             };*/
 
+            console.log(vote);
+            
             await fetch(
 				`https://discord.com/api/v9/channels/1045460117287616552/messages`,
 				{
