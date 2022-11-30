@@ -144,6 +144,46 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 		});
 });
 
+// Blog Endpoints
+app.get("/blog", async (req, res) => {
+	const data = await database.Blog.listAllPosts();
+	let posts = [];
+
+	data.forEach((post) => {
+		let i = post;
+
+		markdown(post.Markdown, (error, result) => {
+			if (error) return logger.error("Markdown", error);
+			else {
+				const html = result.html;
+				i["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+			}
+		});
+
+		posts.push(i);
+	});
+
+	setTimeout(() => {
+		res.json(posts);
+	}, 2000);
+});
+
+app.get("/blog/:post", async (req, res) => {
+	let data = await database.Blog.getPost(req.params.post);
+
+	markdown(data.Markdown, (error, result) => {
+		if (error) return logger.error("Markdown", error);
+		else {
+			const html = result.html;
+			data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+		}
+	});
+
+	setTimeout(() => {
+		res.json(posts);
+	}, 1000);
+});
+
 // Documentation Endpoints
 app.get("/docs", async (req, res) => {
 	res.render("pages/docs", {
