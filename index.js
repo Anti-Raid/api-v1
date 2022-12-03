@@ -39,13 +39,12 @@ marked.setOptions({
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
 const limiter = ratelimits({
-
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 	message: {
-		alert: "You have exceeded our Rate Limit of 30 requests per 15 minutes!",
+		alert: "You have exceeded our Rate Limit of 100 requests per 15 minutes!",
 		error: true,
 	},
 });
@@ -107,7 +106,6 @@ app.get("/cdn/images/:image", async (req, res) => {
 				.map((x) => x.split(".")[0])
 				.join(" | "),
 		});
-
 	else res.sendFile(filePath);
 });
 app.get("/cdn/images", async (req, res) => {
@@ -155,6 +153,46 @@ app.all(`/api/:category/:endpoint`, async (req, res) => {
 		});
 });
 
+// Blog Endpoints
+app.get("/blog", async (req, res) => {
+	const data = await database.Blog.listAllPosts();
+	let posts = [];
+
+	data.forEach((post) => {
+		let i = post;
+
+		markdown(post.Markdown, (error, result) => {
+			if (error) return logger.error("Markdown", error);
+			else {
+				const html = result.html;
+				i["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+			}
+		});
+
+		posts.push(i);
+	});
+
+	setTimeout(() => {
+		res.json(posts);
+	}, 2000);
+});
+
+app.get("/blog/:post", async (req, res) => {
+	let data = await database.Blog.getPost(req.params.post);
+
+	markdown(data.Markdown, (error, result) => {
+		if (error) return logger.error("Markdown", error);
+		else {
+			const html = result.html;
+			data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+		}
+	});
+
+	setTimeout(() => {
+		res.json(posts);
+	}, 1000);
+});
+
 // Documentation Endpoints
 app.get("/docs", async (req, res) => {
 	res.render("pages/docs", {
@@ -176,11 +214,9 @@ app.get("/docs/:title", async (req, res) => {
 app.all("/auth/login", async (req, res) => {
 	// Check if origin is allowed.
 	const allowedOrigins = [
-		"https://antiraid.xyz",
 		"https://v6-beta.antiraid.xyz",
-
 		"https://apply.antiraid.xyz",
-		"https://v6-blog.antiraid.xyz",
+		"https://marketplace.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -230,44 +266,27 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-		const tokens = dbUser.tokens;
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
+		const token = crypto.randomUUID();
 
-		tokens.push(token);
+		await database.Tokens.add(token, dbUser.id, new Date());
 
 		await database.Users.updateUser(
 			dbUser.id,
 			userInfo,
 			guilds,
 			dbUser.notifications,
-			tokens,
 			dbUser.staff_applications
 		);
 
 		response = token;
 	} else {
-		const tokens = [];
-		const token = {
-			token: crypto.randomUUID(),
-			date: new Date(),
-			verified: true,
-		};
+		const token = crypto.randomUUID();
 
-		tokens.push(token);
+		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
 
-		await database.Users.createUser(
-			userInfo.id,
-			userInfo,
-			guilds,
-			[],
-			tokens,
-			[]
-		);
-		response = token.token;
+		await database.Tokens.add(token, userInfo.id, new Date());
+
+		response = token;
 	}
 
 	const extraData = JSON.parse(req.query.state);
