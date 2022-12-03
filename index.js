@@ -110,6 +110,15 @@ app.get("/cdn/images/:image", async (req, res) => {
 
 	else res.sendFile(filePath);
 });
+app.get("/cdn/images", async (req, res) => {
+		return res.send({
+			parameters: fs
+				.readdirSync("./public/images")
+				.filter((file) => file.endsWith(".png"))
+				.map((x) => x.split(".")[0])
+				.join(" | "),
+		});
+});
 
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
