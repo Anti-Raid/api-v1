@@ -261,7 +261,7 @@ app.all("/auth/callback", async (req, res) => {
 	const discord = await auth.discord.getAccessToken(req.query.code);
 	const userInfo = await auth.discord.getUserInfo(discord.access_token);
 
-	const discordRefresh = await auth.discord.newAccessToken(
+	const discordRefresh = await auth.discord.generateAccessToken(
 		discord.refresh_token
 	);
 	const guilds = await auth.discord.getGuilds(discordRefresh.access_token);
