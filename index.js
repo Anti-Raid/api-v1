@@ -108,6 +108,7 @@ app.get("/cdn/images/:image", async (req, res) => {
 		});
 	else res.sendFile(filePath);
 });
+
 app.get("/cdn/images", async (req, res) => {
 		return res.send({
 			parameters: fs
@@ -117,6 +118,9 @@ app.get("/cdn/images", async (req, res) => {
 				.join(" | "),
 		});
 });
+
+// Regular Endpoint
+app.all("/", (req, res) => res.json({ message: "Hello World!" }));
 
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
