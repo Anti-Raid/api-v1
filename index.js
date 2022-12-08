@@ -220,6 +220,7 @@ app.all("/auth/login", async (req, res) => {
 	const allowedOrigins = [
 		"https://v6-beta.antiraid.xyz",
 		"https://apply.antiraid.xyz",
+        "https://blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
 	];
 
@@ -272,7 +273,6 @@ app.all("/auth/callback", async (req, res) => {
 		const token = crypto.randomUUID();
 
 		await database.Tokens.add(token, dbUser.id, new Date());
-
 		await database.Users.updateUser(
 			dbUser.id,
 			userInfo,
@@ -286,7 +286,6 @@ app.all("/auth/callback", async (req, res) => {
 		const token = crypto.randomUUID();
 
 		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
-
 		await database.Tokens.add(token, userInfo.id, new Date());
 
 		response = token;
@@ -301,13 +300,6 @@ app.all("/auth/callback", async (req, res) => {
 		res.redirect(url);
 	}, 1000);
 });
-
-// Page not Found
-// app.all("*", async (req, res) => {
-// 	res.status(404).json({
-// 		error: "This endpoint does not exist.",
-// 	});
-// });
 
 // Start Server
 app.listen(9527, () => {
