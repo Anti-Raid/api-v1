@@ -27,12 +27,29 @@ module.exports = (database) => {
 	};
 
 	// Get the Access Token
-	const getAccessToken = async (code, access) => {
+	const getAccessToken = async (code) => {
 		const token = await auth
 			.tokenRequest({
 				code: code,
 				scope: ["identify", "guilds"],
-				grantType: access ? "authorization_code" : "refresh_token",
+				grantType: "authorization_code",
+			})
+			.catch((err) => {
+				return {
+					error: err,
+				};
+			});
+
+		return token;
+	};
+
+	// Get a new Access Token
+	const newAccessToken = async (code) => {
+		const token = await auth
+			.tokenRequest({
+				refreshToken: code,
+				scope: ["identify", "guilds"],
+				grantType: "refresh_token",
 			})
 			.catch((err) => {
 				return {
@@ -105,6 +122,7 @@ module.exports = (database) => {
 		discord: {
 			getAuthURL,
 			getAccessToken,
+			newAccessToken,
 			getRefreshToken,
 			revokeAccessToken,
 			getUserInfo,
