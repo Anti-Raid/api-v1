@@ -45,7 +45,7 @@ module.exports = {
 				{
 					method: "post",
 					body: JSON.stringify({
-          embeds: [embed],
+						embeds: [embed],
 					}),
 					headers: {
 						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
