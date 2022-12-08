@@ -1,5 +1,4 @@
 // Packages
-const crypto = require("node:crypto");
 const Discord = require("discord-oauth2");
 require("dotenv").config();
 
@@ -43,8 +42,8 @@ module.exports = (database) => {
 		return token;
 	};
 
-	// Get a new Access Token
-	const newAccessToken = async (code) => {
+	// Generate a new Access Token
+	const generateAccessToken = async (code) => {
 		const token = await auth
 			.tokenRequest({
 				refreshToken: code,
@@ -122,7 +121,7 @@ module.exports = (database) => {
 		discord: {
 			getAuthURL,
 			getAccessToken,
-			newAccessToken,
+			generateAccessToken,
 			getRefreshToken,
 			revokeAccessToken,
 			getUserInfo,
