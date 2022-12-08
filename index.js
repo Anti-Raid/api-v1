@@ -131,6 +131,19 @@ app.get("/cdn/images", async (req, res) => {
 // Regular Endpoint
 app.all("/", (req, res) => res.json({ message: "Hello World!" }));
 
+app.get("/cdn/images", async (req, res) => {
+		return res.send({
+			parameters: fs
+				.readdirSync("./public/images")
+				.filter((file) => file.endsWith(".png"))
+				.map((x) => x.split(".")[0])
+				.join(" | "),
+		});
+});
+
+// Regular Endpoint
+app.all("/", (req, res) => res.json({ message: "Hello World!" }));
+
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
 	const endpoint = `${req.params.category}/${req.params.endpoint}`;
