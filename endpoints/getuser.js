@@ -17,6 +17,7 @@ module.exports = {
 		const user = await database.Users.getUser(id);
 
 		user["staff_applications"] = [];
+                user["guilds"] = [];
 
 		if (user) res.send(user);
 		else
