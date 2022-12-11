@@ -120,7 +120,14 @@ app.get("/cdn/images", async (req, res) => {
 });
 
 // Regular Endpoint
-app.all("/", (req, res) => res.json({ message: "Hello World!" }));
+app.all("/", (req, res) => {
+	res.header("Content-Type", "application/json");
+	res.json({
+		message: "Welcome to the AntiRaid API! 👋",
+		error: false,
+		fatal: false,
+	});
+});
 
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
