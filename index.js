@@ -278,14 +278,15 @@ app.all("/auth/callback", async (req, res) => {
 			userInfo,
 			guilds,
 			dbUser.notifications,
-			dbUser.staff_applications
+			dbUser.staff_applications,
+            dbUser.roles
 		);
 
 		response = token;
 	} else {
 		const token = crypto.randomUUID();
 
-		await database.Users.createUser(userInfo.id, userInfo, guilds, [], []);
+		await database.Users.createUser(userInfo.id, userInfo, guilds, [], [], []);
 		await database.Tokens.add(token, userInfo.id, new Date());
 
 		response = token;
