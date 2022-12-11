@@ -220,7 +220,7 @@ app.all("/auth/login", async (req, res) => {
 	const allowedOrigins = [
 		"https://v6-beta.antiraid.xyz",
 		"https://apply.antiraid.xyz",
-        "https://blog.antiraid.xyz",
+		"https://blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
 	];
 
@@ -279,14 +279,21 @@ app.all("/auth/callback", async (req, res) => {
 			guilds,
 			dbUser.notifications,
 			dbUser.staff_applications,
-            dbUser.roles
+			dbUser.roles
 		);
 
 		response = token;
 	} else {
 		const token = crypto.randomUUID();
 
-		await database.Users.createUser(userInfo.id, userInfo, guilds, [], [], []);
+		await database.Users.createUser(
+			userInfo.id,
+			userInfo,
+			guilds,
+			[],
+			[],
+			[]
+		);
 		await database.Tokens.add(token, userInfo.id, new Date());
 
 		response = token;
