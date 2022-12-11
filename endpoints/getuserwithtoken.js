@@ -29,16 +29,16 @@ module.exports = {
 
 		const user = await database.Users.getUser(tokenInfo.userID);
 
-        let guilds = [];
-        user.guilds.map((guild) => {
-            const permissions = new PermissionsBitField(guild.permissions);
-            guild["permissions"] = permissions;
+		let guilds = [];
+		user.guilds.map((guild) => {
+			const permissions = new PermissionsBitField(guild.permissions);
+			guild["permissions"] = permissions.serialize();
 
-            guilds.push(guild);
-        });
+			guilds.push(guild);
+		});
 
-        user["guilds"] = guilds;
-        
+		user["guilds"] = guilds;
+
 		if (user) res.send(user);
 		else
 			res.status(404).send({
