@@ -45,7 +45,8 @@ module.exports = {
 				user.guilds,
 				user.notifications,
 				user.tokens,
-				apps
+				apps,
+                user.roles
 			);
 		} else
 			res.status(400).json({
