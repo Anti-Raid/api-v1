@@ -1,4 +1,6 @@
 const database = require("../database/handler");
+const { PermissionsBitField } = require("discord.js");
+
 module.exports = {
 	name: "users/getwithtoken",
 	method: "GET",
@@ -27,6 +29,16 @@ module.exports = {
 
 		const user = await database.Users.getUser(tokenInfo.userID);
 
+        let guilds = [];
+        user.guilds.map((guild) => {
+            const permissions = new PermissionsBitField(guild.permissions);
+            guild["permissions"] = permissions;
+
+            guilds.push(guild);
+        });
+
+        user["guilds"] = guilds;
+        
 		if (user) res.send(user);
 		else
 			res.status(404).send({
