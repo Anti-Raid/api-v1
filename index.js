@@ -201,7 +201,9 @@ app.get("/blog", async (req, res) => {
 app.get("/blog/:post", async (req, res) => {
 	let data = await database.Blog.getPost(req.params.post);
 
-	markdown(data.Markdown, (error, result) => {
+        if (!data) return res.status(404).json({ error: "Post not Found", code: 404 });
+	else {
+        markdown(data.Markdown, (error, result) => {
 		if (error) return logger.error("Markdown", error);
 		else {
 			const html = result.html;
@@ -210,8 +212,9 @@ app.get("/blog/:post", async (req, res) => {
 	});
 
 	setTimeout(() => {
-		res.json(posts);
+		res.json(data);
 	}, 1000);
+        }
 });
 
 // Documentation Endpoints
