@@ -9,6 +9,7 @@ const database = require("./database/handler");
 const auth = require("./auth")(database);
 const path = require("path");
 const crypto = require("node:crypto");
+const cloudinary = require("cloudinary");
 const ratelimits = require("express-rate-limit");
 require("dotenv").config();
 
@@ -35,10 +36,19 @@ marked.setOptions({
 	xhtml: false,
 });
 
+// Configure Cloudinary
+cloudinary.config({ 
+  cloud_name: 'dzupu7gnk', 
+  api_key: '463115852878299', 
+  api_secret: 'WJkO6THT4RDtlpmgyfuR3oysoW4' 
+});
+
 // DOMPurify
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
-const limiter = ratelimits({
+
+// Configure Ratelimits
+const ratelimitMiddleware = ratelimits({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -58,7 +68,7 @@ app.use(
 		root: __dirname,
 	})
 );
-app.use(limiter);
+app.use(ratelimitMiddleware);
 
 // API Endpoints Map
 const apiEndpoints = new Map();
