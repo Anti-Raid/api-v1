@@ -9,6 +9,7 @@ const database = require("./database/handler");
 const auth = require("./auth")(database);
 const path = require("path");
 const crypto = require("node:crypto");
+const cloudinary = require("cloudinary");
 const ratelimits = require("express-rate-limit");
 require("dotenv").config();
 
@@ -35,10 +36,19 @@ marked.setOptions({
 	xhtml: false,
 });
 
+// Configure Cloudinary
+cloudinary.config({ 
+  cloud_name: 'dzupu7gnk', 
+  api_key: '463115852878299', 
+  api_secret: 'WJkO6THT4RDtlpmgyfuR3oysoW4' 
+});
+
 // DOMPurify
 const { JSDOM } = require("jsdom");
 const DOMPurify = require("dompurify")(new JSDOM().window);
-const limiter = ratelimits({
+
+// Configure Ratelimits
+const ratelimitMiddleware = ratelimits({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -58,7 +68,7 @@ app.use(
 		root: __dirname,
 	})
 );
-app.use(limiter);
+app.use(ratelimitMiddleware);
 
 // API Endpoints Map
 const apiEndpoints = new Map();
@@ -120,7 +130,14 @@ app.get("/cdn/images", async (req, res) => {
 });
 
 // Regular Endpoint
-app.all("/", (req, res) => res.json({ message: "Hello World!" }));
+app.all("/", (req, res) => {
+	res.header("Content-Type", "application/json");
+	res.json({
+		message: "Welcome to the AntiRaid API! 👋",
+		error: false,
+		fatal: false,
+	});
+});
 
 // API Endpoints
 app.all(`/api/:category/:endpoint`, async (req, res) => {
@@ -184,7 +201,9 @@ app.get("/blog", async (req, res) => {
 app.get("/blog/:post", async (req, res) => {
 	let data = await database.Blog.getPost(req.params.post);
 
-	markdown(data.Markdown, (error, result) => {
+        if (!data) return res.status(404).json({ error: "Post not Found", code: 404 });
+	else {
+        markdown(data.Markdown, (error, result) => {
 		if (error) return logger.error("Markdown", error);
 		else {
 			const html = result.html;
@@ -193,8 +212,9 @@ app.get("/blog/:post", async (req, res) => {
 	});
 
 	setTimeout(() => {
-		res.json(posts);
+		res.json(data);
 	}, 1000);
+        }
 });
 
 // Documentation Endpoints
@@ -220,8 +240,9 @@ app.all("/auth/login", async (req, res) => {
 	const allowedOrigins = [
 		"https://v6-beta.antiraid.xyz",
 		"https://apply.antiraid.xyz",
-        "https://blog.antiraid.xyz",
+		"https://blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
+                "https://vocid.antiraid.xyz"
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -279,14 +300,21 @@ app.all("/auth/callback", async (req, res) => {
 			guilds,
 			dbUser.notifications,
 			dbUser.staff_applications,
-            dbUser.roles
+			dbUser.roles
 		);
 
 		response = token;
 	} else {
 		const token = crypto.randomUUID();
 
-		await database.Users.createUser(userInfo.id, userInfo, guilds, [], [], []);
+		await database.Users.createUser(
+			userInfo.id,
+			userInfo,
+			guilds,
+			[],
+			[],
+			[]
+		);
 		await database.Tokens.add(token, userInfo.id, new Date());
 
 		response = token;
