@@ -16,8 +16,9 @@ module.exports = {
 		const id = req.query.id;
 		const user = await database.Users.getUser(id);
 
-		user["staff_applications"] = [];
-		user["guilds"] = [];
+		delete user["staff_applications"];
+		delete user["guilds"];
+                delete user["twoFactorSecret"];
 
 		if (user) res.send(user);
 		else
