@@ -280,6 +280,8 @@ app.all("/auth/callback", async (req, res) => {
 		}
 	}
 
+        if (twoFactorSecret) return; // Do not do shit, if they have a Two Factor Authentication secret, at this time.
+
 	const discord = await auth.discord.getAccessToken(req.query.code);
 	const userInfo = await auth.discord.getUserInfo(discord.access_token);
 
