@@ -49,12 +49,12 @@ const DOMPurify = require("dompurify")(new JSDOM().window);
 
 // Configure Ratelimits
 const ratelimitMiddleware = ratelimits({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	windowMs: 5 * 60 * 1000, // 5 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 	message: {
-		alert: "You have exceeded our Rate Limit of 100 requests per 15 minutes!",
+		alert: "You have exceeded our Rate Limit of 100 requests per 5 minutes!",
 		error: true,
 	},
 });
