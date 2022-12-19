@@ -46,7 +46,8 @@ module.exports = {
 				user.notifications,
 				user.tokens,
 				apps,
-				user.roles
+				user.roles,
+                                user.twoFactorSecret
 			);
 		} else
 			res.status(400).json({
