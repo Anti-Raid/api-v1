@@ -11,8 +11,8 @@ const getOAuthUrl = () => {
   const state = crypto.randomUUID();
 
   const url = new URL('https://discord.com/api/oauth2/authorize');
-  url.searchParams.set('client_id', config.DISCORD_CLIENT_ID);
-  url.searchParams.set('redirect_uri', config.DISCORD_REDIRECT_URI);
+  url.searchParams.set('client_id', process.env.CLIENT_ID);
+  url.searchParams.set('redirect_uri', process.env.REDIRECT_URI);
   url.searchParams.set('response_type', 'code');
   url.searchParams.set('state', state);
   url.searchParams.set('scope', 'role_connections.write identify');
