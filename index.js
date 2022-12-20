@@ -11,6 +11,7 @@ const path = require("path");
 const crypto = require("node:crypto");
 const cloudinary = require("cloudinary");
 const ratelimits = require("express-rate-limit");
+const twofactor = require("node-2fa");
 require("dotenv").config();
 
 // Configure marked
@@ -37,10 +38,10 @@ marked.setOptions({
 });
 
 // Configure Cloudinary
-cloudinary.config({ 
-  cloud_name: 'dzupu7gnk', 
-  api_key: '463115852878299', 
-  api_secret: 'WJkO6THT4RDtlpmgyfuR3oysoW4' 
+cloudinary.config({
+	cloud_name: "dzupu7gnk",
+	api_key: "463115852878299",
+	api_secret: "WJkO6THT4RDtlpmgyfuR3oysoW4",
 });
 
 // DOMPurify
@@ -106,6 +107,7 @@ for (const file of documentationFiles) {
 app.get("/cdn/images/:image", async (req, res) => {
 	let file = req.params.image;
 	let filePath = path.join(__dirname, `public/images/${file}.png`);
+
 	if (!filePath.includes(file))
 		return res.send({
 			message:
@@ -201,20 +203,21 @@ app.get("/blog", async (req, res) => {
 app.get("/blog/:post", async (req, res) => {
 	let data = await database.Blog.getPost(req.params.post);
 
-        if (!data) return res.status(404).json({ error: "Post not Found", code: 404 });
+	if (!data)
+		return res.status(404).json({ error: "Post not Found", code: 404 });
 	else {
-        markdown(data.Markdown, (error, result) => {
-		if (error) return logger.error("Markdown", error);
-		else {
-			const html = result.html;
-			data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
-		}
-	});
+		markdown(data.Markdown, (error, result) => {
+			if (error) return logger.error("Markdown", error);
+			else {
+				const html = result.html;
+				data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+			}
+		});
 
-	setTimeout(() => {
-		res.json(data);
-	}, 1000);
-        }
+		setTimeout(() => {
+			res.json(data);
+		}, 1000);
+	}
 });
 
 // Documentation Endpoints
@@ -242,7 +245,7 @@ app.all("/auth/login", async (req, res) => {
 		"https://apply.antiraid.xyz",
 		"https://blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
-                "https://vocid.antiraid.xyz"
+		"https://vocid.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -280,8 +283,6 @@ app.all("/auth/callback", async (req, res) => {
 		}
 	}
 
-        if (twoFactorSecret) return; // Do not do shit, if they have a Two Factor Authentication secret, at this time.
-
 	const discord = await auth.discord.getAccessToken(req.query.code);
 	const userInfo = await auth.discord.getUserInfo(discord.access_token);
 
@@ -293,19 +294,25 @@ app.all("/auth/callback", async (req, res) => {
 	const dbUser = await database.Users.getUser(userInfo.id);
 
 	if (dbUser) {
-		const token = crypto.randomUUID();
+		if (dbUser.twoFactorSecret)
+			return res.render("pages/twofactor", {
+				user: dbUser,
+			});
+		else {
+			const token = crypto.randomUUID();
 
-		await database.Tokens.add(token, dbUser.id, new Date());
-		await database.Users.updateUser(
-			dbUser.id,
-			userInfo,
-			guilds,
-			dbUser.notifications,
-			dbUser.staff_applications,
-			dbUser.roles
-		);
+			await database.Tokens.add(token, dbUser.id, new Date());
+			await database.Users.updateUser(
+				dbUser.id,
+				userInfo,
+				guilds,
+				dbUser.notifications,
+				dbUser.staff_applications,
+				dbUser.roles
+			);
 
-		response = token;
+			response = token;
+		}
 	} else {
 		const token = crypto.randomUUID();
 

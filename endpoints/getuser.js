@@ -1,4 +1,5 @@
 const database = require("../database/handler");
+
 module.exports = {
 	name: "users/get",
 	method: "GET",
@@ -18,7 +19,7 @@ module.exports = {
 
 		delete user["staff_applications"];
 		delete user["guilds"];
-                delete user["twoFactorSecret"];
+		delete user["twoFactorSecret"];
 
 		if (user) res.send(user);
 		else

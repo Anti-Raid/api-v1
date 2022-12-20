@@ -47,7 +47,7 @@ module.exports = {
 				user.tokens,
 				apps,
 				user.roles,
-                                user.twoFactorSecret
+				user.twoFactorSecret
 			);
 		} else
 			res.status(400).json({

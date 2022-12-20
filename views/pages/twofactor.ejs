@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <!-- Metadata -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title><%= title %></title>
+        <meta name="og:title" content="<%= title %>">
+        <meta name="site-name" content="AntiRaid">
+        <meta name="description" content="<%= description %>">
+        <meta name="og:description" content="<%= description %>">
+    </head>
+
+    <body>
+        <div class="user">
+            <img 
+                class="profile-picture" 
+                height="120px" 
+                width="120px"
+                src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.discordUser.avatar %>"
+                alt="Profile Picture"
+            />
+
+            <h1 class="username"><%= user.discordUser.username %> <span class="discriminator"><%= user.discordUser.discriminator %></span></h1>
+        </div>
+
+        <div class="otp">
+            <h1 class="otp_notification">To continue, you need to enter your one-time Two Factor Verification Code which can be obtained from your authenticator app.</h1>
+            
+            <label for="otp_code">OTP Code</label>
+            <input type="text" id="otp_code" name="otp_code" class="otp_code" placeholder="Two Factor Authentication Code" /> 
+            <button type="button" id="otp_submit" class="otp_submit">Login</button>
+        </div>
+    </body>
+    
+    <style></style>
+</html>
