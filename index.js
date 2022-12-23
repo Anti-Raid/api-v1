@@ -332,7 +332,37 @@ app.all("/auth/callback", async (req, res) => {
 
 // Tailscale Event Endpoint
 app.post("/tailscale/event", async (req, res) => {
-	console.log(req.body[0]);
+	const data = req.body[0];
+
+        const url = "https://discord.com/api/v9/1055702766472921169/messages";
+        let embed = {
+           title: "New Event!",
+           fields: [{
+              name: "Timestamp",
+              value: data.timestamp
+           }, {
+              name: "Type",
+              value: data.type
+           }, {
+              name: "Tailnet",
+              value: data.tailnet
+           }, {
+              name: "Message",
+              value: data.message
+           }]
+        };
+
+        fetch(url, {
+           method: "POST",
+           headers: {
+             "Authorization": f"Bot MTA1MTQ2NDUwMzkyMzA2ODk3OA.GBV-8Z.4nr7qLuDLOuP8WQq4kZ6xcE8cZb-B7gohYjvRA",
+             "Content-Type": "application/json"
+           },
+           body: {
+             "embeds": [embed]
+           }
+        });
+
 	res.send("Success!");
 });
 
