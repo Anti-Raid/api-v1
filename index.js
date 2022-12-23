@@ -37,10 +37,10 @@ marked.setOptions({
 });
 
 // Configure Cloudinary
-cloudinary.config({ 
-  cloud_name: 'dzupu7gnk', 
-  api_key: '463115852878299', 
-  api_secret: 'WJkO6THT4RDtlpmgyfuR3oysoW4' 
+cloudinary.config({
+	cloud_name: "dzupu7gnk",
+	api_key: "463115852878299",
+	api_secret: "WJkO6THT4RDtlpmgyfuR3oysoW4",
 });
 
 // DOMPurify
@@ -201,20 +201,21 @@ app.get("/blog", async (req, res) => {
 app.get("/blog/:post", async (req, res) => {
 	let data = await database.Blog.getPost(req.params.post);
 
-        if (!data) return res.status(404).json({ error: "Post not Found", code: 404 });
+	if (!data)
+		return res.status(404).json({ error: "Post not Found", code: 404 });
 	else {
-        markdown(data.Markdown, (error, result) => {
-		if (error) return logger.error("Markdown", error);
-		else {
-			const html = result.html;
-			data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
-		}
-	});
+		markdown(data.Markdown, (error, result) => {
+			if (error) return logger.error("Markdown", error);
+			else {
+				const html = result.html;
+				data["Markdown"] = DOMPurify.sanitize(marked.parse(html));
+			}
+		});
 
-	setTimeout(() => {
-		res.json(data);
-	}, 1000);
-        }
+		setTimeout(() => {
+			res.json(data);
+		}, 1000);
+	}
 });
 
 // Documentation Endpoints
@@ -242,7 +243,7 @@ app.all("/auth/login", async (req, res) => {
 		"https://apply.antiraid.xyz",
 		"https://blog.antiraid.xyz",
 		"https://marketplace.antiraid.xyz",
-                "https://vocid.antiraid.xyz"
+		"https://vocid.antiraid.xyz",
 	];
 
 	if (!allowedOrigins.includes(req.get("origin")))
@@ -334,34 +335,40 @@ app.all("/auth/callback", async (req, res) => {
 app.post("/tailscale/event", async (req, res) => {
 	const data = req.body[0];
 
-        const url = "https://discord.com/api/v9/1055702766472921169/messages";
-        let embed = {
-           title: "New Event!",
-           fields: [{
-              name: "Timestamp",
-              value: data.timestamp
-           }, {
-              name: "Type",
-              value: data.type
-           }, {
-              name: "Tailnet",
-              value: data.tailnet
-           }, {
-              name: "Message",
-              value: data.message
-           }]
-        };
+	const url =
+		"https://discord.com/api/v9/channels/1055702766472921169/messages";
+	const embed = {
+		title: "New Event!",
+		fields: [
+			{
+				name: "Type",
+				value: data.type,
+			},
+			{
+				name: "Tailnet",
+				value: data.tailnet,
+			},
+			{
+				name: "Message",
+				value: data.message,
+			},
+		],
+	};
 
-        fetch(url, {
-           method: "POST",
-           headers: {
-             "Authorization": "Bot MTA1MTQ2NDUwMzkyMzA2ODk3OA.GBV-8Z.4nr7qLuDLOuP8WQq4kZ6xcE8cZb-B7gohYjvRA",
-             "Content-Type": "application/json"
-           },
-           body: {
-             "embeds": [embed]
-           }
-        });
+	console.log(embed);
+
+	const i = await fetch(url, {
+		method: "POST",
+		headers: {
+			Authorization:
+				"Bot MTA1MTQ2NDUwMzkyMzA2ODk3OA.GBV-8Z.4nr7qLuDLOuP8WQq4kZ6xcE8cZb-B7gohYjvRA",
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			embeds: [embed],
+		}),
+	}).then((b) => b.json());
+	console.log(i);
 
 	res.send("Success!");
 });
