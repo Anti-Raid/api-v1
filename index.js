@@ -355,7 +355,7 @@ app.post("/tailscale/event", async (req, res) => {
         fetch(url, {
            method: "POST",
            headers: {
-             "Authorization": f"Bot MTA1MTQ2NDUwMzkyMzA2ODk3OA.GBV-8Z.4nr7qLuDLOuP8WQq4kZ6xcE8cZb-B7gohYjvRA",
+             "Authorization": "Bot MTA1MTQ2NDUwMzkyMzA2ODk3OA.GBV-8Z.4nr7qLuDLOuP8WQq4kZ6xcE8cZb-B7gohYjvRA",
              "Content-Type": "application/json"
            },
            body: {
