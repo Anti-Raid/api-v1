@@ -14,6 +14,7 @@
 		"prettier": "2.7.1"
 	},
 	"dependencies": {
+		"cloudinary": "^1.33.0",
 		"colors": "^1.4.0",
 		"cors": "^2.8.5",
 		"discord-oauth2": "^2.10.0",

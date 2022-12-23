@@ -330,6 +330,12 @@ app.all("/auth/callback", async (req, res) => {
 	}, 1000);
 });
 
+// Tailscale Event Endpoint
+app.post("/tailscale/event", async (req, res) => {
+	console.log(req.body[0]);
+	res.send("Success!");
+});
+
 // Start Server
 app.listen(9527, () => {
 	logger.info("Express", "Server started on port 9527");
