@@ -14,6 +14,7 @@
 		"prettier": "2.7.1"
 	},
 	"dependencies": {
+		"cloudinary": "^1.33.0",
 		"colors": "^1.4.0",
 		"cors": "^2.8.5",
 		"discord-oauth2": "^2.10.0",
@@ -28,6 +29,7 @@
 		"jsdom": "^20.0.0",
 		"markdown-parse": "^0.2.1",
 		"marked": "^4.0.18",
+		"node-2fa": "^2.0.3",
 		"node-fetch": "^2.6.7",
 		"pg": "^8.8.0",
 		"sequelize": "^6.25.3"
