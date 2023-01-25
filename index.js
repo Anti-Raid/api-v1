@@ -336,7 +336,7 @@ app.post("/tailscale/event", async (req, res) => {
 	const data = req.body[0];
 
 	const url =
-		"https://discord.com/api/v9/channels/1055702766472921169/messages";
+		"https://discord.com/api/v9/channels/1064239494754222121/messages";
 	const embed = {
 		title: "New Event!",
 		fields: [
