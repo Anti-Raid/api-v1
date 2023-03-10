@@ -17,9 +17,9 @@ module.exports = {
 			const embed = {
 				title: "New Vote!",
 				author: {
-					name: `${vote.userObj.username}#${vote.userObj.discriminator}`,
-					icon_url: vote.userObj.avatar,
-					url: vote.userObj.avatar,
+					name: `${req.body["userObj"].username}#${req.body["userObj"].discriminator}`,
+					icon_url: req.body["userObj"].avatar,
+					url: req.body["userObj"].avatar,
 				},
 				fields: [
 					{
