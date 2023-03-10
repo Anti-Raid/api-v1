@@ -28,7 +28,7 @@ module.exports = {
 					},
 					{
 						name: "Vote Time",
-						value: String(new Date(req.body["timeStamp"])),
+						value: String(new Date(req.body["time"])),
 					},
 					{
 						name: "Total Votes",
