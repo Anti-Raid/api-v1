@@ -28,7 +28,7 @@ module.exports = {
 					},
 					{
 						name: "Vote Time",
-						value: String(new Date(req.body["time"])),
+						value: String(new Date(req.body["time"] * 1000)),
 					},
 					{
 						name: "Total Votes",
