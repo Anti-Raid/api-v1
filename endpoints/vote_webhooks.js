@@ -38,7 +38,7 @@ module.exports = {
 			};
 
 			await fetch(
-				`https://discord.com/api/v9/channels/1045460117287616552/messages`,
+				`https://discord.com/api/v9/channels/1064286667881594921/messages`,
 				{
 					method: "post",
 					body: JSON.stringify({
