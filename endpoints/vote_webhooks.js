@@ -45,7 +45,7 @@ module.exports = {
 						embeds: [embed],
 					}),
 					headers: {
-						Authorization: `Bot ODQ5MzMxMTQ1ODYyMjgzMjc1.YLZnRA.GOd92__QEBiBjGZDEhgMONOjwGg`,
+						Authorization: `Bot ODU4MzA4OTY5OTk4OTc0OTg3.GkaOk_.SCzdbnjxQQDmAwxdPJYkpo8TZ-AdJO9C_y6kPY`,
 						"Content-Type": "application/json",
 					},
 				}
