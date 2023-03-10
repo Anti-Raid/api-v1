@@ -1,6 +1,4 @@
 const db = require("../database/handler");
-const Infinity = require("infinity-bots");
-const webhook = new Infinity.Webhook("AntiRaidIsTheBest499");
 
 module.exports = {
 	name: "webhooks/vote",
@@ -15,8 +13,7 @@ module.exports = {
 	 * @param {*} DOMpurify
 	 * @param {*} marked
 	 */
-	execute: webhook.hookListener(
-		async (vote, req, res, fetch, database, auth, DOMpurify, marked) => {
+	execute: async (req, res, fetch, database, auth, DOMpurify, marked) => {
 			const embed = {
 				title: "New Vote!",
 				author: {
@@ -31,11 +28,11 @@ module.exports = {
 					},
 					{
 						name: "Vote Time",
-						value: String(new Date(vote.timeStamp)),
+						value: String(new Date(req.body["timeStamp"])),
 					},
 					{
 						name: "Total Votes",
-						value: String(vote.votes),
+						value: String(req.body["votes"]),
 					},
 				],
 			};
