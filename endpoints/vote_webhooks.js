@@ -37,6 +37,7 @@ module.exports = {
 				],
 			};
 
+                        console.log(req.body)
 			await fetch(
 				`https://discord.com/api/v9/channels/1064286667881594921/messages`,
 				{
