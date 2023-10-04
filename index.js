@@ -11,7 +11,15 @@ const path = require("path");
 const crypto = require("node:crypto");
 const cloudinary = require("cloudinary");
 const ratelimits = require("express-rate-limit");
+const Sentry = require("@sentry/node");
 require("dotenv").config();
+
+// Sentry
+Sentry.init({
+  dsn: 'https://c980c92cdb1d262ccc0835f32653f8d2@trace.select-list.xyz/7',
+  // Performance Monitoring
+  tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+});
 
 // Configure marked
 const marked = require("marked");
