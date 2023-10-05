@@ -11,7 +11,7 @@
 	"keywords": [],
 	"author": "Anti Raid",
 	"devDependencies": {
-		"prettier": "2.7.1"
+		"prettier": "2.8.8"
 	},
 	"dependencies": {
 		"cloudinary": "^1.33.0",
